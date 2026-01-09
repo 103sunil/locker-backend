@@ -13,7 +13,10 @@ const delete_file = async (req, res) => {
     if (locker) {
       const match = await bcrypt.compare(String(passkey), locker.passkey);
       if (match) {
-        const file = locker.data.find((file) => file.fileName === fileName);
+        // Robust matching: trim whitespace and check
+        const targetFileName = fileName.trim();
+        const file = locker.data.find((file) => file.fileName.trim() === targetFileName);
+
         if (file) {
           const params = {
             Bucket: process.env.BUCKET_NAME,
