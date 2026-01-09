@@ -29,7 +29,7 @@ async function test() {
     const blob = new Blob([fileContent], { type: 'text/plain' });
     const fileName = "test.txt";
 
-    console.log("Requesting Presigned URL...");
+    console.log("Requesting Presigned URL (Init)...");
     const uploadInitRes = await fetch(`${API_URL}/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,7 +53,22 @@ async function test() {
         });
         console.log("S3 Upload Status:", s3UploadRes.status);
         if (s3UploadRes.ok) {
-            console.log("Upload Successful!");
+            console.log("Confirming Upload (Complete)...");
+            const completeRes = await fetch(`${API_URL}/complete_upload`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: encrypt(name),
+                    passkey: encrypt(passkey),
+                    fileName: encrypt(fileName),
+                    s3Key: encrypt(uploadInitData.s3Key)
+                })
+            });
+            const completeData = await completeRes.json();
+            console.log("Complete Response:", completeData);
+            if (completeRes.ok) {
+                console.log("Reference Code: SUCCESS_2PHASE");
+            }
         } else {
             console.log("S3 Upload Failed:", await s3UploadRes.text());
         }

@@ -21,6 +21,7 @@ const check_key = async (req, res, next) => {
             Bucket: process.env.BUCKET_NAME,
             Key: locker.data[i].s3Key || locker.data[i].fileName,
           };
+          console.log(`[check_key] Generating URL for file: ${locker.data[i].fileName}, Key: ${getObjectParams.Key}`);
           const command = new GetObjectCommand(getObjectParams);
           const signedUrl = await getSignedUrl(s3, command, {
             expiresIn: 3600,

@@ -7,7 +7,7 @@ import { check_locker } from "./controllers/check_locker.js";
 import { get_locker } from "./controllers/get_locker.js";
 import { check_key } from "./controllers/check_key.js";
 import { delete_locker } from "./controllers/delete_locker.js";
-import { uploadFile } from "./controllers/upload.js";
+import { initUpload, completeUpload } from "./controllers/upload.js";
 import { upload } from "./config/aws.js";
 import { delete_file } from "./controllers/delete_file.js";
 
@@ -30,7 +30,8 @@ app.post("/api/check_key", check_key);
 
 app.post("/api/delete", delete_locker);
 
-app.post("/api/upload", uploadFile);
+app.post("/api/upload", initUpload);
+app.post("/api/complete_upload", completeUpload);
 
 app.post("/api/delete_file", delete_file);
 mongoose
