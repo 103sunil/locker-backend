@@ -37,10 +37,13 @@ const delete_file = async (req, res) => {
           console.log(`[delete_file] DB updated. File '${fileName}' removed.`);
           res.json({ status: 1, message: "File Deleted" });
         } else {
-          console.warn(`[delete_file] File '${fileName}' not found in locker data.`);
-          // Dump available filenames to log to help debugging
-          console.log(`[delete_file] Available files:`, locker.data.map(f => f.fileName));
-          res.status(400).json({ status: 0, message: "File Not Found" });
+          console.warn(`[delete_file] File '${fileName}' not found in locker.`);
+          // DEBUG: Return available files to the user to see what is going on
+          const availableFiles = locker.data.map(f => `'${f.fileName}'`).join(", ");
+          res.status(400).json({
+            status: 0,
+            message: `File Not Found. Server has: [${availableFiles}]. You sent: '${fileName}'`
+          });
         }
       } else {
         console.warn(`[delete_file] Incorrect passkey for locker: '${name}'`);
