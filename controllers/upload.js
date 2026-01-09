@@ -14,7 +14,14 @@ const encryptName = (bytes = 32) => crypto.randomBytes(bytes).toString("hex");
 // Phase 1: Generate Signed URL
 const initUpload = async (req, res) => {
   try {
-    const { name, passkey, fileName, fileType } = decryptObjectValues(req.body);
+    // DISABLE FILENAME ENCRYPTION: Only decrypt name and passkey
+    const { name, passkey } = decryptObjectValues({
+      name: req.body.name,
+      passkey: req.body.passkey
+    });
+    const fileName = req.body.fileName;
+    const fileType = req.body.fileType;
+
     console.log(`[initUpload] Request for Locker: ${name}, File: ${fileName}`);
 
     const locker = await model.findOne({ name });
@@ -54,7 +61,14 @@ const initUpload = async (req, res) => {
 // Phase 2: Save metadata after successful S3 upload
 const completeUpload = async (req, res) => {
   try {
-    const { name, passkey, fileName, s3Key } = decryptObjectValues(req.body);
+    // DISABLE FILENAME ENCRYPTION: Only decrypt name and passkey
+    const { name, passkey } = decryptObjectValues({
+      name: req.body.name,
+      passkey: req.body.passkey
+    });
+    const fileName = req.body.fileName;
+    const s3Key = req.body.s3Key;
+
     console.log(`[completeUpload] Request for Locker: ${name}, s3Key: ${s3Key}`);
 
     const locker = await model.findOne({ name });

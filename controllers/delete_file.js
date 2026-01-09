@@ -6,7 +6,13 @@ import { decryptObjectValues } from "../config/utils.js";
 
 const delete_file = async (req, res) => {
   try {
-    const { name, passkey, fileName } = decryptObjectValues(req.body);
+    // DISABLE FILENAME ENCRYPTION: Only decrypt name and passkey
+    const { name, passkey } = decryptObjectValues({
+      name: req.body.name,
+      passkey: req.body.passkey
+    });
+    const fileName = req.body.fileName;
+
     console.log(`[delete_file] Request to delete file: '${fileName}' from locker: '${name}'`);
 
     const locker = await model.findOne({ name: name }).exec();
