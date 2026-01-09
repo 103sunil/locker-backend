@@ -14,10 +14,14 @@ const delete_locker = async (req, res, next) => {
         for (let i = 0; i < locker.data.length; i++) {
           const params = {
             Bucket: process.env.BUCKET_NAME,
-            Key: locker.data[i].fileName,
+            Key: locker.data[i].s3Key || locker.data[i].fileName,
           };
-          const command = new DeleteObjectCommand(params);
-          await s3.send(command);
+          try {
+            const command = new DeleteObjectCommand(params);
+            await s3.send(command);
+          } catch (err) {
+            console.log("Error deleting file during locker deletion (ignoring):", err);
+          }
         }
       }
       await model.deleteOne({ name: name });
